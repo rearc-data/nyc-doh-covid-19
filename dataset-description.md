@@ -1,0 +1,1 @@
+This resource contains data assembled by the NYC Department of Health and Mental Hygiene (DOHMH)'s COVID-19 Response team, and provides insight into the current state of the COVID-19 epidemic in New York City. As DOHMH collects their data in realtime, the values in the included datasets are subject to change.
