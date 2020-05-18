@@ -2,7 +2,7 @@
 
 The source code outlining how this product gathers, transforms, revises and publishes its datasets is available at [https://github.com/rearc-data/nyc-doh-covid-19](https://github.com/rearc-data/nyc-doh-covid-19).
 
-## Main Overview:
+## Main Overview
 This resource contains data assembled by the NYC Department of Health and Mental Hygiene (DOHMH)'s COVID-19 Response team, and provides insight into the current state of the COVID-19 pandemic in New York City. As DOHMH collects their data in realtime, the values in the included datasets are subject to change.
 
 #### Data Source

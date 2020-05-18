@@ -6,7 +6,7 @@
 
 You can subscribe to the AWS Data Exchange product utilizing the automation featured in this repository by visiting [https://aws.amazon.com/marketplace/pp/prodview-flc4q2mgzczvm](https://aws.amazon.com/marketplace/pp/prodview-flc4q2mgzczvm).
 
-## Main Overview:
+## Main Overview
 This resource contains data assembled by the NYC Department of Health and Mental Hygiene (DOHMH)'s COVID-19 Response team, and provides insight into the current state of the COVID-19 epidemic in New York City. As DOHMH collects their data in realtime, the values in the included datasets are subject to change.
 
 #### Data Source

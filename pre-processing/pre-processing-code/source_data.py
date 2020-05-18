@@ -1,41 +1,72 @@
-import urllib.request
 import os
 import boto3
+from urllib.request import urlopen
+from urllib.error import URLError, HTTPError
+from multiprocessing.dummy import Pool
 
-def source_dataset(new_filename, s3_bucket, new_s3_key):
+def data_to_s3(endpoint):
+
+	# throws error occured if there was a problem accessing data
+	# otherwise downloads and uploads to s3
 
 	source_dataset_url = 'https://raw.githubusercontent.com/nychealth/coronavirus-data/master/'
 
-	urllib.request.urlretrieve(
-		source_dataset_url + 'boro.csv', '/tmp/' + new_filename + '-boro.csv')
+	try:
+		response = urlopen(source_dataset_url + endpoint)
 
-	urllib.request.urlretrieve(
-		source_dataset_url + 'by-age.csv', '/tmp/' + new_filename + '-by-age.csv')
+	except HTTPError as e:
+		raise Exception('HTTPError: ', e.code, endpoint)
 
-	urllib.request.urlretrieve(
-		source_dataset_url + 'by-sex.csv', '/tmp/' + new_filename + '-by-sex.csv')
+	except URLError as e:
+		raise Exception('URLError: ', e.reason, endpoint)
 
-	urllib.request.urlretrieve(
-		source_dataset_url + 'case-hosp-death.csv', '/tmp/' + new_filename + '-case-hosp-death.csv')
+	else:
+		data_set_name = os.environ['DATA_SET_NAME']
 
-	urllib.request.urlretrieve(
-		source_dataset_url + 'summary.csv', '/tmp/' + new_filename + '-summary.csv')
+		filename = None
 
-	urllib.request.urlretrieve(
-		source_dataset_url + 'tests-by-zcta.csv', '/tmp/' + new_filename + '-tests-by-zcta.csv')
+		if '/' in endpoint:
+			filename = data_set_name + '-' + endpoint.split('/', 1)[1]
+		
+		else:
+			filename = data_set_name + '-' + endpoint
 
-	urllib.request.urlretrieve(
-		source_dataset_url + 'Deaths/probable-confirmed-dod.csv', '/tmp/' + new_filename + '-probable-confirmed-dod.csv')
+		file_location = '/tmp/' + filename
 
-	# uploading new s3 dataset
-	s3 = boto3.client("s3")
-	folder = "/tmp"
+		with open(file_location, 'wb') as f:
+			f.write(response.read())
 
-	asset_list = []
+		# variables/resources used to upload to s3
+		s3_bucket = os.environ['S3_BUCKET']
+		new_s3_key = data_set_name + '/dataset/'
+		s3 = boto3.client('s3')
 
-	for filename in os.listdir(folder):
-		print(filename)
-		s3.upload_file('/tmp/' + filename, s3_bucket, new_s3_key + filename)
-		asset_list.append({'Bucket': s3_bucket, 'Key': new_s3_key + filename})
+		s3.upload_file(file_location, s3_bucket, new_s3_key + filename)			
+		
+		print('Uploaded: ' + filename)
 
+		# deletes to preserve limited space in aws lamdba
+		os.remove(file_location)
+
+		# dicts to be used to add assets to the dataset revision
+		return {'Bucket': s3_bucket, 'Key': new_s3_key + filename}
+
+def source_dataset():
+
+	# list of enpoints to be used to access data included with product
+	endpoints = [
+		'boro.csv',
+		'by-age.csv',
+		'by-sex.csv',
+		'case-hosp-death.csv',
+		'summary.csv',
+		'tests-by-zcta.csv',
+		'Deaths/probable-confirmed-dod.csv'
+	]
+
+	# multithreading speed up accessing data, making lambda run quicker
+	with (Pool(7)) as p:
+		asset_list = p.map(data_to_s3, endpoints)
+
+	# asset_list is returned to be used in lamdba_handler function
 	return asset_list
