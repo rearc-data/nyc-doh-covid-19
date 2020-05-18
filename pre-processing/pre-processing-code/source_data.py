@@ -61,7 +61,7 @@ def source_dataset():
 		'case-hosp-death.csv',
 		'summary.csv',
 		'tests-by-zcta.csv',
-		'Deaths/probable-confirmed-dod.csv'
+		'deaths/probable-confirmed-dod.csv'
 	]
 
 	# multithreading speed up accessing data, making lambda run quicker
