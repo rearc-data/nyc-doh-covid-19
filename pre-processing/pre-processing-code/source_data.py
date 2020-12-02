@@ -23,14 +23,7 @@ def data_to_s3(endpoint):
 	else:
 		data_set_name = os.environ['DATA_SET_NAME']
 
-		filename = None
-
-		if '/' in endpoint:
-			filename = data_set_name + '-' + endpoint.split('/', 1)[1]
-		
-		else:
-			filename = data_set_name + '-' + endpoint
-
+		filename = data_set_name + '-' + endpoint.replace('/', '-')
 		file_location = '/tmp/' + filename
 
 		with open(file_location, 'wb') as f:
@@ -55,13 +48,49 @@ def source_dataset():
 
 	# list of enpoints to be used to access data included with product
 	endpoints = [
-		'boro.csv',
-		'by-age.csv',
-		'by-sex.csv',
-		'case-hosp-death.csv',
-		'summary.csv',
-		'tests-by-zcta.csv',
-		'deaths/probable-confirmed-dod.csv'
+		# totals
+		'totals/antibody-by-age.csv',
+		'totals/antibody-by-boro.csv',
+		'totals/antibody-by-modzcta.csv',
+		'totals/antibody-by-poverty.csv',
+		'totals/antibody-by-sex.csv',
+		'totals/by-age.csv',
+		'totals/by-boro.csv',
+		'totals/by-poverty.csv',
+		'totals/by-race.csv',
+		'totals/by-sex.csv',
+		'totals/data-by-modzcta.csv',
+		'totals/deaths-by-boro-age.csv',
+		'totals/deaths-by-race-age.csv',
+		'totals/deaths-by-underlying-conditions.csv',
+		'totals/group-cases-by-boro.csv',
+		'totals/group-data-by-boro.csv',
+		'totals/group-death-by-boro.csv',
+		'totals/group-hosp-by-boro.csv',
+		'totals/probable-confirmed-by-age.csv',
+		'totals/probable-confirmed-by-boro.csv',
+		'totals/probable-confirmed-by-location.csv',
+		'totals/probable-confirmed-by-race.csv',
+		'totals/probable-confirmed-by-sex.csv',
+		'totals/summary.csv',
+        # trends
+		'trends/antibody-by-week.csv',
+		'trends/caserate-by-modzcta.csv',
+		'trends/covid-like-illness.csv',
+		'trends/data-by-day.csv',
+		'trends/percentpositive-by-modzcta.csv',
+		'trends/testing-by-age.csv',
+		'trends/testing-turnaround.csv',
+		'trends/testrate-by-modzcta.csv',
+		'trends/tests.csv',
+		# latest
+		'latest/last7days-by-modzcta.csv',
+		'latest/now-covid-like-illness.csv',
+		'latest/now-data-by-day.csv',
+		'latest/now-summary.csv',
+		'latest/now-testing-by-age.csv',
+		'latest/now-tests.csv',
+		'latest/pp-by-modzcta.csv'
 	]
 
 	# multithreading speed up accessing data, making lambda run quicker
