@@ -21,7 +21,7 @@ def data_to_s3(endpoint):
 		raise Exception('URLError: ', e.reason, endpoint)
 
 	else:
-		data_set_name = os.environ['DATA_SET_NAME']
+		data_set_name = os.environ['DATASET_NAME']
 
 		filename = data_set_name + '-' + endpoint.replace('/', '-')
 		file_location = '/tmp/' + filename
@@ -30,12 +30,12 @@ def data_to_s3(endpoint):
 			f.write(response.read())
 
 		# variables/resources used to upload to s3
-		s3_bucket = os.environ['S3_BUCKET']
+		s3_bucket = os.environ['ASSET_BUCKET']
 		new_s3_key = data_set_name + '/dataset/'
 		s3 = boto3.client('s3')
 
-		s3.upload_file(file_location, s3_bucket, new_s3_key + filename)			
-		
+		s3.upload_file(file_location, s3_bucket, new_s3_key + filename)
+
 		print('Uploaded: ' + filename)
 
 		# deletes to preserve limited space in aws lamdba
